@@ -6,16 +6,26 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR" || exit 1
 
 COMBINED_OUT="1225_combined.csv"
+ARCHIVE_DIR="$SCRIPT_DIR/archive"
 
 print_line() {
   printf '%s\n' "$1"
 }
 
 pause_and_exit() {
+  exit_code="${1:-0}"
   print_line ""
-  read -n 1 -s -r -p "Press any key to close this window..."
-  print_line ""
-  exit "${1:-0}"
+  if [ -r /dev/tty ]; then
+    printf "Press Enter to close this window..."
+    read -r _ < /dev/tty
+    print_line ""
+  fi
+  if command -v osascript >/dev/null 2>&1; then
+    osascript -e 'tell application "Terminal" to try' \
+              -e 'close front window' \
+              -e 'end try' >/dev/null 2>&1
+  fi
+  exit "$exit_code"
 }
 
 print_line "----------------------------------------"
@@ -87,8 +97,19 @@ fi
 
 print_line "Using Excel file: $(basename "$INPUT_XLSX")"
 print_line ""
+
+if [ -f "$SCRIPT_DIR/$COMBINED_OUT" ]; then
+  mkdir -p "$ARCHIVE_DIR"
+  timestamp="$(date +%Y%m%d_%H%M%S)"
+  archived_file="$ARCHIVE_DIR/${COMBINED_OUT%.csv}_archived_${timestamp}.csv"
+  cp "$SCRIPT_DIR/$COMBINED_OUT" "$archived_file"
+  print_line "Backed up existing $COMBINED_OUT to:"
+  print_line "  - archive/$(basename "$archived_file")"
+  print_line ""
+fi
+
 print_line "Step 1/1: Building $COMBINED_OUT ..."
-if ! uv run -- python "$SCRIPT_DIR/combine_1225_tabs.py" --input "$INPUT_XLSX" --output "$SCRIPT_DIR/$COMBINED_OUT"; then
+if ! uv run -- python "$SCRIPT_DIR/scripts/combine_1225_tabs.py" --input "$INPUT_XLSX" --output "$SCRIPT_DIR/$COMBINED_OUT"; then
   print_line ""
   print_line "The step failed. Please check that your Excel file is not open, then try again."
   pause_and_exit 1

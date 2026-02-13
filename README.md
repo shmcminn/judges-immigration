@@ -1,53 +1,58 @@
-# Run This Pipeline (Mac, Non-Technical Steps)
+# 1225 Update Steps (Mac)
 
-This folder includes a file named `Run_1225_Pipeline.command`.
+Use this guide to turn a new Excel file into the CSV used in Datawrapper.
 
-When you run it, it creates:
+## What this does
+
+Running `Run_1225_Pipeline.command` creates:
 - `1225_combined.csv`
 
-## Before your first run (one-time setup)
+If `1225_combined.csv` already exists, a backup is saved first in:
+- `archive/`
+- Example backup name: `1225_combined_archived_20260213_143000.csv`
 
-1. Install `uv` (only once on each Mac):
-   - Open **Terminal**
-   - Paste and run (without the tick marks):
+## One-time setup on each Mac
 
-   curl -LsSf https://astral.sh/uv/install.sh | sh
+1. Open **Terminal**.
+2. Run this command (without the backticks):
 
-2. Close Terminal when it finishes.
+```
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+3. Close Terminal when it finishes.
 
 ## Every time you get a new Excel file
 
-1. Put the new Excel file in this same folder.
-2. Rename it to `1225.xlsx`, then double-click `Run_1225_Pipeline.command`
-3. Wait until you see **Done.**
-4. Now you can close the terminal window.
-5. Use these output files in this folder for Datawrapper:
-   - `1225_combined.csv`
+1. Put the new Excel file in this folder.
+2. Rename the file to `1225.xlsx`.
+3. Double-click `Run_1225_Pipeline.command`.
+4. Wait for the message that says **Done.**
+5. Close the terminal window.
+6. Confirm that `1225_combined.csv` is in this folder.
 
 ## Upload to Datawrapper
 
-After `1225_combined.csv` is created:
+1. Open this link:
+   https://app.datawrapper.de/politico/edit/e7pkn/publish
+2. In Datawrapper Step 1 (**Upload Data**), click **XLS/CSV upload**.
+3. Select `1225_combined.csv`.
+4. Go to Step 3 (**Visualize**).
+5. Open the **Annotate** tab (left side).
+6. Update the dates in the **Notes** field.
+7. Check the table preview carefully.
+8. Go to Step 4 (**Publish & Embed**) and click **Republish**.
 
-1. Open this chart:
-   - https://app.datawrapper.de/politico/edit/e7pkn/publish
-2. In Datawrapper Step 1 (Upload Data), click "XLS/CSV upload".
-3. Choose `1225_combined.csv`.
-4. Click Step 3 (Visualize)
-5. Click the Annotate tab on the left.
-6. Change the dates in the "Notes" field to make sure it is up to date.
-7. Check the table preview to make sure everything looks right.
-8. Click Step 4 (Publish & Embed), then click "Republish".
+## If the .command file is blocked by Mac
 
-## If Mac blocks opening the .command file
+1. Right-click `Run_1225_Pipeline.command`.
+2. Click **Open**.
+3. In the security popup, click **Open** again.
 
-1. Right-click `Run_1225_Pipeline.command`
-2. Click **Open**
-3. Click **Open** again in the security popup
+## Troubleshooting
 
-## If something goes wrong
-
-- Make sure the Excel file is not currently open in Excel.
-- Make sure it is a real `.xlsx` Excel file (not just renamed):
-  - In Finder, right-click the file, click **Get Info**, and check **Kind**.
-  - If needed, open the file in Excel and use **File > Save As** to save a true `.xlsx` file.
-- Make sure you are running the `.command` file from this same folder.
+- Excel file is open: close the Excel file, then run again.
+- File type is wrong: it must be a real `.xlsx` file.
+- Quick check for file type: in Finder, right-click the file, click **Get Info**, and check **Kind**.
+- If needed, re-save from Excel: **File > Save As** and choose `.xlsx`.
+- Make sure the Excel file and `Run_1225_Pipeline.command` are in the same folder.

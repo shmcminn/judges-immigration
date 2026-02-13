@@ -2,21 +2,21 @@
 
 ## What this bundle contains
 - `1225.xlsx`: source workbook (maintained by non-technical teammates)
-- `combine_1225_tabs.py`: formats all rows for Datawrapper table output
-- `run_pipeline.sh`: one-command runner
+- `scripts/combine_1225_tabs.py`: formats all rows for Datawrapper table output
+- `scripts/run_pipeline.sh`: one-command runner
 - `1225_combined.csv`: latest generated table CSV
 
 ## How to run
 From this folder:
 
 ```bash
-./run_pipeline.sh
+./scripts/run_pipeline.sh
 ```
 
 Equivalent explicit commands:
 
 ```bash
-uv run -- python combine_1225_tabs.py --input 1225.xlsx --output 1225_combined.csv
+uv run -- python scripts/combine_1225_tabs.py --input 1225.xlsx --output 1225_combined.csv
 ```
 
 ## Output intent
