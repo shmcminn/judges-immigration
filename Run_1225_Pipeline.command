@@ -35,12 +35,12 @@ print_line "  - $COMBINED_OUT"
 print_line "----------------------------------------"
 print_line ""
 
-if ! command -v uv >/dev/null 2>&1; then
-  print_line "I could not find 'uv' on this Mac."
+if ! command -v python3 >/dev/null 2>&1; then
+  print_line "I could not find 'python3' on this Mac."
   print_line ""
-  print_line "Please install uv once, then run this again:"
+  print_line "Please install Python 3, then run this again."
   print_line "  1) Open Terminal"
-  print_line "  2) Run: curl -LsSf https://astral.sh/uv/install.sh | sh"
+  print_line "  2) Run: xcode-select --install"
   print_line "  3) Close Terminal and double-click this file again"
   pause_and_exit 1
 fi
@@ -101,15 +101,30 @@ print_line ""
 if [ -f "$SCRIPT_DIR/$COMBINED_OUT" ]; then
   mkdir -p "$ARCHIVE_DIR"
   timestamp="$(date +%Y%m%d_%H%M%S)"
-  archived_file="$ARCHIVE_DIR/${COMBINED_OUT%.csv}_archived_${timestamp}.csv"
-  cp "$SCRIPT_DIR/$COMBINED_OUT" "$archived_file"
-  print_line "Backed up existing $COMBINED_OUT to:"
-  print_line "  - archive/$(basename "$archived_file")"
+  base_name="${COMBINED_OUT%.csv}"
+  shopt -s nullglob
+  archive_files=("$ARCHIVE_DIR/${base_name}_archived_"*.csv)
+  shopt -u nullglob
+
+  latest_archive=""
+  if [ "${#archive_files[@]}" -gt 0 ]; then
+    latest_archive="${archive_files[${#archive_files[@]}-1]}"
+  fi
+
+  if [ -n "$latest_archive" ] && cmp -s "$SCRIPT_DIR/$COMBINED_OUT" "$latest_archive"; then
+    print_line "Existing $COMBINED_OUT is unchanged from latest archive."
+    print_line "Skipping new archive copy."
+  else
+    archived_file="$ARCHIVE_DIR/${base_name}_archived_${timestamp}.csv"
+    cp "$SCRIPT_DIR/$COMBINED_OUT" "$archived_file"
+    print_line "Backed up existing $COMBINED_OUT to:"
+    print_line "  - archive/$(basename "$archived_file")"
+  fi
   print_line ""
 fi
 
 print_line "Step 1/1: Building $COMBINED_OUT ..."
-if ! uv run -- python "$SCRIPT_DIR/scripts/combine_1225_tabs.py" --input "$INPUT_XLSX" --output "$SCRIPT_DIR/$COMBINED_OUT"; then
+if ! python3 "$SCRIPT_DIR/scripts/combine_1225_tabs.py" --input "$INPUT_XLSX" --output "$SCRIPT_DIR/$COMBINED_OUT"; then
   print_line ""
   print_line "The step failed. Please check that your Excel file is not open, then try again."
   pause_and_exit 1
