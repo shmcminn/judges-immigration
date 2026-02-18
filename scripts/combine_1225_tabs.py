@@ -223,9 +223,13 @@ def color_appointed_by_html(name: str) -> str:
 
 
 def ruling_link_emoji_html(value: str) -> str:
-    url = (value or "").strip()
-    if not url or not re.match(r"^https?://", url, flags=re.IGNORECASE):
+    raw_value = (value or "").strip()
+    # Some spreadsheet cells contain hidden prefix characters before the URL.
+    # Find the first URL anywhere in the text instead of requiring position 0.
+    match = re.search(r"https?://[^\s<>\"']+", raw_value, flags=re.IGNORECASE)
+    if not match:
         return value
+    url = match.group(0)
     return f'<a href="{url}" target="_blank">🔗</a>'
 
 
